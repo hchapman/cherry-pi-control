@@ -35,7 +35,9 @@ class WebControl(object):
         except subprocess.CalledProcessError as e:
             out = e.output
             if "unable to find" in out:
-                err_type = "The hard drive has already been ejected"
+                err_type = "The hard drive has already been ejected."
+            elif "device is busy" in out:
+                err_type = "The device is busy. Are you sure you stopped MPD?"
             else:
                 err_type = "Something happened, but we're not sure what'"
             return {"error": True, "output": out, "err_type": err_type}

@@ -36,7 +36,7 @@
           $("#eject-hdd a.btn").click(function() {
               output_div = $(this).siblings("#output");
               $.getJSON("/ejectHDD", function(data) {
-                  output_div.html("<strong>$ umount /mnt/hd1</strong>\n" +
+                  output_div.html("<strong>$ eject /mnt/hd1</strong>\n" +
                                   data["output"]);
                   if (data["error"]) {
                       new_err_alert = error_alert.clone();
