@@ -16,35 +16,21 @@
     <script type="text/javascript">
       $(function() {
           error_alert = $("<div class='alert alert-error alert-block'><h4>Error!</h4></div>");
-
-          $("#stop-mpd a.btn").click(function() {
-              output_div = $(this).siblings("#output");
-              $.getJSON("/stopMPD", function(data) {
-                  output_div.html("<strong>$ mpc stop</strong>\n" +
-                                  data["output"]);
+ 
+          function run_and_output() {
+              cmd = $(this).data("cmd");
+              url = $(this).data("url");
+              $(this).siblings("#output")
+                  .children("#cmd")
+                  .html("<strong>$ "+cmd+"</strong>\n");
+              output_div = $(this).siblings("#output").children("#out");
+              $.getJSON(url, function(data) {
+                  output_div.html(data["output"]);
               });
-          });
+          }
 
-          $("#mpd-status a.btn").click(function() {
-              output_div = $(this).siblings("#output");
-              $.getJSON("/checkMPD", function(data) {
-                  output_div.html("<strong>$ mpc status</strong>\n" +
-                                  data["output"]);
-              });
-          });
+          $("a.cmd-btn").each(function() {$(this).click(run_and_output)});
 
-          $("#eject-hdd a.btn").click(function() {
-              output_div = $(this).siblings("#output");
-              $.getJSON("/ejectHDD", function(data) {
-                  output_div.html("<strong>$ eject /mnt/hd1</strong>\n" +
-                                  data["output"]);
-                  if (data["error"]) {
-                      new_err_alert = error_alert.clone();
-                      new_err_alert.append(data["err_type"]);
-                      output_div.prepend(new_err_alert)
-                  }
-              });
-          });
       });
     </script>
   </head>
@@ -55,21 +41,33 @@
           <h1>Raspberry Princess Control Center</h1>
           <h2>Check MPD Status</h2>
           <div id="mpd-status">
-            <a class="btn">Check MPD Status</a>
+            <a class="btn cmd-btn" data-cmd="mpc status"
+               data-url="/checkMPD">
+              Check MPD Status</a>
             <pre class="well sh-out" id="output">
+              <div id="cmd" ></div>
+              <div id="out" ></div>
             </pre>
           </div>
           <h2>Eject USB Hard Drive</h2>
           <h3>Step 1: Stop MPD from trying to play music off the hard drive</h3>
           <div id="stop-mpd">
-            <a class="btn">Stop MPD</a>
+            <a class="btn cmd-btn" data-cmd="mpc stop"
+               data-url="/stopMPD">
+              Stop MPD</a>
             <pre class="well sh-out" id="output">
+              <div id="cmd" ></div>
+              <div id="out" ></div>
             </pre>
           </div>
           <h3>Step 2: Eject the Hard Drive</h3>
           <div id="eject-hdd">
-            <a class="btn">Eject</a>
+            <a class="btn cmd-btn" data-cmd="eject /mnt/hd1"
+               data-url="/ejectHDD">
+              Eject</a>
             <pre class="well sh-out" id="output">
+              <div id="cmd" ></div>
+              <div id="out" ></div>
             </pre>
           </div>
         </div>

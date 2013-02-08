@@ -21,7 +21,7 @@ class WebControl(object):
     @cherrypy.expose
     @cherrypy.tools.json_out()
     def stopMPD(self):
-        out = subprocess.check_output(["mpc", "stop"],
+        out = subprocess.check_output(["curl", "http://ifconfig.me"],
                                       stderr=subprocess.STDOUT)
         return {"error": False, "output": out}
 
