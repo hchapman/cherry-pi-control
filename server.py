@@ -44,6 +44,30 @@ class WebControl(object):
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
+    def setAlarm(self, time, fadein=None, fadeout=None,
+                 delay=None, volume=None):
+        cmd = ["mpdalarm"]
+        if delay is not None:
+            cmd.extend(["-s", "%d"%int(delay)])
+        if volume:
+            volume = min(100, max(1, (int(volume))))
+            cmd.extend(["-v", "%d"%volume])
+        if fadeout:
+            cmd.extend(["-o", "%d"%int(fadeout)])
+        if fadein:
+            cmd.extend(["-i", "%d"%int(fadein)])
+        if ":" in str(time):
+            time = str(time).replace(":", ".")
+        time = float(time)
+        cmd.append("%.2f"%time)
+
+
+        out = subprocess.check_output(cmd, stderr=subprocess.STDOUT,
+        )
+        return {"cmd": cmd, "error": False, "output": out}
+
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
     def checkMPD(self):
         out = subprocess.check_output(["mpc", "status"],
                                       stderr=subprocess.STDOUT)
